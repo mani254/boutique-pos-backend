@@ -42,7 +42,7 @@ function LoginPage({ adminLogin, showNotification }) {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		adminLogin: (email, password) => dispatch(adminLogin(email, password)),
+		adminLogin: (logInDetails) => dispatch(adminLogin(logInDetails)),
 		showNotification: (message) => dispatch(showNotification(message)),
 	};
 };

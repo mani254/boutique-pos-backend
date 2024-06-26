@@ -21,7 +21,9 @@ function App({ modal }) {
 			<Notification />
 			<Routes>
 				<Route path="/login" element={<LoginPage />} />
-				<Route path="/" element={<AdminLayout />}></Route>
+				<Route path="/" element={<AdminLayout />}>
+            
+            </Route>
 			</Routes>
 			{modal.showModal && <Modal props={modal.modalProps} component={modal.modalComponent} />}
 		</div>

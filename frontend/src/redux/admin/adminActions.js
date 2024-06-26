@@ -16,11 +16,11 @@ export const signInStart = () => ({
 });
 
 
-export const adminLogin = ({ email, password }) => {
+export const adminLogin = (logInDetails) => {
    return async (dispatch) => {
       dispatch(signInStart());
       try {
-         const res = await axios.post(`${process.env.REACT_APP_BACKENDURI}/api/auth/loginAdmin`, { email, password });
+         const res = await axios.post(`${process.env.REACT_APP_BACKENDURI}/api/auth/loginAdmin`, logInDetails);
          dispatch(signInSuccess(res.data.admin));
          localStorage.setItem("adminAuthToken", res.data.token);
          return Promise.resolve();
