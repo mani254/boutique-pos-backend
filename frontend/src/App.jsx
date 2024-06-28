@@ -13,6 +13,9 @@ import Notification from "./components/Notification/Notification.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import AdminLayout from "./components/AdminLayout/AdminLayout.js";
 
+import Dashboard from "./components/Dashboard/Dashboard.jsx";
+import Categories from "./components/Category/Categories.jsx";
+
 function App({ modal }) {
 	axios.defaults.withCredentials = true;
 
@@ -22,8 +25,9 @@ function App({ modal }) {
 			<Routes>
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/" element={<AdminLayout />}>
-            
-            </Route>
+					<Route index element={<Dashboard />}></Route>
+					<Route path="/categories" element={<Categories />}></Route>
+				</Route>
 			</Routes>
 			{modal.showModal && <Modal props={modal.modalProps} component={modal.modalComponent} />}
 		</div>

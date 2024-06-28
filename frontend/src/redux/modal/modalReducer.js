@@ -12,7 +12,7 @@ const modalReducer = (state = initialState, action) => {
       case modalTypes.SHOW_MODAL:
          console.log(action.payload, "action.payload");
          return {
-            ...state,
+            ...state, 
             showModal: true,
             modalProps: action.payload.props,
             modalComponent: action.payload.component,

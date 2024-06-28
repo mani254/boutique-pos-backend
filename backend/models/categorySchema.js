@@ -6,6 +6,10 @@ const categorySchema = new Schema({
       type: String,
       required: true
    },
+   status: {
+      type: Boolean,
+      required: true
+   }
 });
 
 const Categories = mongoose.model('Categories', categorySchema, 'categories');

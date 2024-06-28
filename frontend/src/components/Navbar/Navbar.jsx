@@ -8,10 +8,10 @@ function Navbar() {
 		<nav className="navbar-container">
 			<div>
 				<div className="d-flex align-items-center">
-					<img className="logo" src="/assets/logo.png" alt="logo" />
-					<h4 className="m-0">Sruthi Boutique</h4>
+					{/* <img className="logo" src="/assets/logo.png" alt="logo" /> */}
+					<h4 className="m-0 ms-3 mt-3">Sruthi Boutique</h4>
 				</div>
-				<ul className="nav-links mt-2">
+				<ul className="nav-links mt-4">
 					<li>
 						<NavLink to="/dashboard">Dashboard</NavLink>
 					</li>
@@ -23,6 +23,9 @@ function Navbar() {
 					</li>
 					<li>
 						<NavLink to="/customers">Customers</NavLink>
+					</li>
+					<li>
+						<NavLink to="/categories">Categories</NavLink>
 					</li>
 				</ul>
 			</div>
