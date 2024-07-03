@@ -77,7 +77,7 @@ const categoryReducer = (state = initialState, action) => {
          return {
             ...state,
             deleteLoading: false,
-            categories: state.categories.filter(category => category._id !== action.payload._id),
+            categories: state.categories.filter(category => category._id !== action.payload),
             error: null
          };
       case types.DELETE_CATEGORY_FAILURE:

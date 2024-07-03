@@ -1,9 +1,9 @@
 // adminReducer.js
-import { SIGN_IN_SUCCESS, SIGN_IN_FAILURE, SIGN_IN_START } from "./adminActionTypes";
+import * as types from "./adminActionTypes";
 
 const initialState = {
    isLoggedIn: false,
-   adminData: null,
+   admins: [],
    loading: false,
    error: null,
    token: localStorage.getItem("adminAuthToken"),
@@ -11,12 +11,12 @@ const initialState = {
 
 const adminReducer = (state = initialState, action) => {
    switch (action.type) {
-      case SIGN_IN_START:
+      case types.SIGN_IN_START:
          return {
             ...state,
             loading: true,
          };
-      case SIGN_IN_SUCCESS:
+      case types.SIGN_IN_SUCCESS:
          return {
             ...state,
             isLoggedIn: action.payload !== null,
@@ -25,7 +25,61 @@ const adminReducer = (state = initialState, action) => {
             error: null,
             token: action.payload ? action.payload.token : null,
          };
-      case SIGN_IN_FAILURE:
+      case types.SIGN_IN_FAILURE:
+         return {
+            ...state,
+            error: action.payload,
+            loading: false,
+         };
+      case types.GET_ADMINS_SUCCESS:
+         return {
+            ...state,
+            admins: action.payload,
+            loading: false,
+            error: null,
+         };
+      case types.GET_ADMINS_FAILURE:
+         return {
+            ...state,
+            error: action.payload,
+            loading: false,
+         };
+      case types.ADD_ADMIN_SUCCESS:
+         return {
+            ...state,
+            admins: [...state.admins, action.payload],
+            loading: false,
+            error: null,
+         };
+      case types.ADD_ADMIN_FAILURE:
+         return {
+            ...state,
+            error: action.payload,
+            loading: false,
+         };
+      case types.UPDATE_ADMIN_SUCCESS:
+         return {
+            ...state,
+            admins: state.admins.map(admin =>
+               admin._id === action.payload._id ? action.payload : admin
+            ),
+            loading: false,
+            error: null,
+         };
+      case types.UPDATE_ADMIN_FAILURE:
+         return {
+            ...state,
+            error: action.payload,
+            loading: false,
+         };
+      case types.DELETE_ADMIN_SUCCESS:
+         return {
+            ...state,
+            admins: state.admins.filter(admin => admin._id !== action.payload),
+            loading: false,
+            error: null,
+         };
+      case types.DELETE_ADMIN_FAILURE:
          return {
             ...state,
             error: action.payload,

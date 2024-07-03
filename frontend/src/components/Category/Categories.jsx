@@ -12,8 +12,6 @@ import { TextInput, SelectInput } from "../FormComponents/FormComponents.jsx";
 import { addCategory, getCategories, updateCategory, deleteCategory } from "../../redux/categories/categoryActions.js";
 import { showModal } from "../../redux/modal/modalActions.js";
 
-
-
 function Categories({ categoriesData, addCategory, getCategories, updateCategory, deleteCategory, showModal }) {
 	const [addCategoryVisible, setAddCategoryVisible] = useState(false);
 	const [updateCategoryVisible, setUpdateCategoryVisible] = useState(false);
@@ -53,15 +51,24 @@ function Categories({ categoriesData, addCategory, getCategories, updateCategory
 		}
 	}
 
-	function handleStatusUpdate() {
-		return null;
+	async function handleUpdateCategory() {
+		try {
+			await updateCategory(categoryData);
+			setUpdateCategoryVisible(false);
+			setCategoryData({ name: "", value: true });
+		} catch (err) {
+			console.log(err.message);
+			console.error("Error while updating the City:", err.response ? err.response.data.error : "Network Error");
+		}
 	}
 
 	function updateCategoryFun(category) {
-		return null;
+		setCategoryData({ id: category._id, ...category });
+		setUpdateCategoryVisible(true);
+		setAddCategoryVisible(false);
 	}
 
-	function handleUpdateCategory() {
+	function handleStatusUpdate() {
 		return null;
 	}
 

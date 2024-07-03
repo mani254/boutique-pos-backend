@@ -27,6 +27,9 @@ function Navbar() {
 					<li>
 						<NavLink to="/categories">Categories</NavLink>
 					</li>
+					<li>
+						<NavLink to="/admins">Admins</NavLink>
+					</li>
 				</ul>
 			</div>
 

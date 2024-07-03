@@ -2,20 +2,22 @@ import React, { useRef, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "./FormComponents.css";
 
-function TextInput({ label, variant, name, ...props }) {
+function TextInput({ label, variant, name, children, ...props }) {
 	return (
 		<div className={`form-input input-wrapper ${variant}`}>
 			<label htmlFor={name}>{label}</label>
 			<input type="text" id={name} name={name} {...props} />
+			{children}
 		</div>
 	);
 }
 
-function NumberInput({ label, variant, name, ...props }) {
+function NumberInput({ label, variant, name, children, ...props }) {
 	return (
 		<div className={`form-input input-wrapper ${variant}`}>
 			<label htmlFor={name}>{label}</label>
 			<input type="number" id={name} name={name} {...props} />
+			{children}
 		</div>
 	);
 }
@@ -24,7 +26,7 @@ function SelectInput({ label, variant, name, options, defaultValue, ...props }) 
 	return (
 		<div className={`form-input select-wrapper ${variant}`}>
 			{label && <label htmlFor={name}>{label}</label>}
-			<select id={name} name={name} defaultValue={defaultValue} {...props}>
+			<select id={name} name={name} value={defaultValue} {...props}>
 				{options.map((option, index) => (
 					<option key={index} value={option.value}>
 						{option.label}
@@ -35,25 +37,27 @@ function SelectInput({ label, variant, name, options, defaultValue, ...props }) 
 	);
 }
 
-function TextArea({ label, variant, name, ...props }) {
+function TextArea({ label, variant, name, children, ...props }) {
 	return (
 		<div className={`form-input input-wrapper ${variant}`}>
 			<label htmlFor={name}>{label}</label>
 			<textarea id={name} name={name} {...props}></textarea>
+			{children}
 		</div>
 	);
 }
 
-function TelInput({ label, variant, name, ...props }) {
+function TelInput({ label, variant, name, children, ...props }) {
 	return (
 		<div className={`form-input input-wrapper ${variant}`}>
 			<label htmlFor={name}>{label}</label>
 			<input type="tel" id={name} name={name} {...props} />
+			{children}
 		</div>
 	);
 }
 
-function PasswordInput({ label, variant, name, ...props }) {
+function PasswordInput({ label, variant, name, children, ...props }) {
 	const [showPassword, setShowPassword] = useState(false);
 	return (
 		<div className={`form-input password-input ${variant}`}>
@@ -64,6 +68,7 @@ function PasswordInput({ label, variant, name, ...props }) {
 					{showPassword ? <FaEyeSlash /> : <FaEye />}
 				</span>
 			</span>
+			{children}
 		</div>
 	);
 }

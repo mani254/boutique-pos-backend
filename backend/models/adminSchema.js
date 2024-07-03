@@ -29,10 +29,13 @@ const adminSchema = new Schema({
       type: Boolean,
       default: false
    },
+   store: {
+      type: Schema.Types.ObjectId,
+      ref: "Stores"
+   },
    otp: {
       type: Number,
    },
-
 }, { timestamps: true });
 
 

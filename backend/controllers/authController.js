@@ -27,60 +27,31 @@ const authController = {
       }
    },
 
-   // registerAdmin: async (req, res) => {
-   //    try {
-   //       const { username, password, email } = req.body;
+   registerAdmin: async (req, res) => {
+      try {
+         const { username, password, email, store } = req.body;
 
-   //       const existingAdmin = await Admin.findOne({ email });
+         const existingEmail = await Admin.findOne({ email });
 
-   //       if (existingAdmin) {
-   //          return res.status(402).json({ error: "Email Already existed" });
-   //       }
+         if (existingEmail) {
+            return res.status(402).json({ error: "Email Already existed" });
+         }
 
-   //       const newAdmin = new Admin({
-   //          username,
-   //          password,
-   //          email,
-   //       });
+         const newAdmin = new Admin({
+            username,
+            password,
+            email,
+            store
+         });
 
-   //       await newAdmin.save();
+         await newAdmin.save();
 
-   //       return res.status(201).json({ message: "Admin created successfully.", admin: newAdmin });
-   //    } catch (error) {
-   //       console.error("Error adding admin:", error);
-   //       return res.status(500).json({ error: "Could not add admin. Please try again later." });
-   //    }
-   // }
-   // registerAdmin: async (req, res) => {
-   //    try {
-   //       const { username, password, email, locations } = req.body;
-
-   //       const existingAdmin = await Admin.findOne({ email });
-
-   //       if (existingAdmin) {
-   //          return res.status(402).json({ error: "Email Already existed" });
-   //       }
-
-   //       const newAdmin = new Admin({
-   //          username,
-   //          password,
-   //          email,
-   //       });
-
-
-   //       if (locations.includes('All')) {
-   //          newAdmin.superAdmin = true;
-   //          newAdmin.locations = []
-   //       }
-
-   //       await newAdmin.save();
-
-   //       return res.status(201).json({ message: "Admin created successfully.", admin: newAdmin });
-   //    } catch (error) {
-   //       console.error("Error adding admin:", error);
-   //       return res.status(500).json({ error: "Could not add admin. Please try again later." });
-   //    }
-   // }
+         return res.status(201).json({ message: "Admin created successfully.", admin: newAdmin });
+      } catch (error) {
+         console.error("Error adding admin:", error);
+         return res.status(500).json({ error: "Could not add admin. Please try again later." });
+      }
+   }
 };
 
 module.exports = authController;

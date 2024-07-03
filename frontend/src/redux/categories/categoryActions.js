@@ -32,7 +32,7 @@ export const updateCategory = (categoryData) => {
       dispatch({ type: types.UPDATE_CATEGORY });
       try {
          const response = await axios.put(`${process.env.REACT_APP_BACKENDURI}/api/categories/${categoryData.id}`, categoryData);
-         dispatch(updateCategorySuccess(response.data));
+         dispatch(updateCategorySuccess(response.data.category));
          dispatch(showNotification('Category Updated Successfully'))
       } catch (err) {
          dispatch(updateCategoryFailure(err.response ? err.response.data.error : "Network Error"));
@@ -56,7 +56,7 @@ export const getCategories = () => {
       dispatch({ type: types.GET_CATEGORIES });
       await axios.get(`${process.env.REACT_APP_BACKENDURI}/api/categories`).then(res => {
          dispatch(getCategoriesSuccess(res.data.categories));
-         return Promise.resolve(res.data)
+         return Promise.resolve(res.data.categories)
       }).catch(err => {
          dispatch(getCategoriesFailure(err.message));
          return Promise.reject(err)
