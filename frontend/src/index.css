@@ -332,3 +332,9 @@ css for the backend Container
 .backend-container .add-container .form-input {
    margin-bottom: 15px;
 }
+
+.navbar-container .icon {
+   font-size: 25px;
+   color: var(--fourth-color);
+   cursor: pointer;
+}

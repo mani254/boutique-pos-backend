@@ -3,12 +3,14 @@ import { TextInput, PasswordInput } from "../components/FormComponents/FormCompo
 import Button from "../components/Button/Button";
 import { connect } from "react-redux";
 
-import { adminLogin } from "../redux/admin/adminActions";
+import { login } from "../redux/auth/authActions";
 import { showNotification } from "../redux/notification/notificationActions";
 import "../styles/LoginPage.css";
+import { useNavigate } from "react-router-dom";
 
-function LoginPage({ adminLogin, showNotification }) {
+function LoginPage({ login, showNotification }) {
 	const [logInDetails, setLoginDetails] = useState({ email: "", password: "" });
+	const navigate = useNavigate();
 
 	function handleChange(e) {
 		setLoginDetails({ ...logInDetails, [e.target.name]: e.target.value });
@@ -16,12 +18,12 @@ function LoginPage({ adminLogin, showNotification }) {
 
 	async function handleSubmit(e) {
 		e.preventDefault();
-		await adminLogin(logInDetails)
+		await login(logInDetails)
 			.then((res) => {
-				showNotification(res.data.message);
+				navigate("/");
+				console.log("logged in succesfully");
 			})
 			.catch((err) => {
-				console.log(err);
 				showNotification(err.response ? err.response.data.error : "Network Error");
 			});
 	}
@@ -42,7 +44,7 @@ function LoginPage({ adminLogin, showNotification }) {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		adminLogin: (logInDetails) => dispatch(adminLogin(logInDetails)),
+		login: (logInDetails) => dispatch(login(logInDetails)),
 		showNotification: (message) => dispatch(showNotification(message)),
 	};
 };

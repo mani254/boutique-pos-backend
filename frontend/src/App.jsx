@@ -1,6 +1,5 @@
-import React from "react";
-
-import { Routes, Route } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
 import axios from "axios";
 
@@ -27,9 +26,34 @@ import AdminPageLayout from "./components/Admin/AdminPageLayout.jsx";
 import Admins from "./components/Admin/Admins.jsx";
 import AddAdmin from "./components/Admin/AddAdmin.jsx";
 import UpdateAdmin from "./components/Admin/updateAdmin.jsx";
+import NotFound from "./pages/404Page.jsx";
+import ServerDown from "./pages/ServerDown.jsx";
 
-function App({ modal }) {
+import { initialLogin } from "./redux/auth/authActions.js";
+import { showNotification } from "./redux/notification/notificationActions.js";
+
+function App({ modal, auth, initialLogin, showNotification }) {
 	axios.defaults.withCredentials = true;
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (auth.isLoggedIn) return;
+		const fetchInitialData = async () => {
+			try {
+				const token = localStorage.getItem("token");
+
+				if (token) {
+					await initialLogin(token);
+				} else {
+					navigate("/login");
+				}
+			} catch (err) {
+				console.error("Login error:", err);
+				showNotification(err.response ? err.response.data.error : "Network Error");
+			}
+		};
+		fetchInitialData();
+	}, [auth.isLoggedIn]);
 
 	return (
 		<div className="App">
@@ -51,6 +75,8 @@ function App({ modal }) {
 					</Route>
 					<Route path="billing" element={<BillingLayout />} />
 				</Route>
+				<Route path="*" element={<NotFound />} />
+				<Route path="/serverdown" element={<ServerDown />} />
 			</Routes>
 			{modal.showModal && <Modal props={modal.modalProps} component={modal.modalComponent} />}
 		</div>
@@ -60,7 +86,15 @@ function App({ modal }) {
 const mapStateToProps = (state) => {
 	return {
 		modal: state.modal,
+		auth: state.auth,
 	};
 };
 
-export default connect(mapStateToProps, null)(App);
+const mapDispatchToProps = (dispatch) => {
+	return {
+		initialLogin: (token) => dispatch(initialLogin(token)),
+		showNotification: (message) => dispatch(showNotification(message)),
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

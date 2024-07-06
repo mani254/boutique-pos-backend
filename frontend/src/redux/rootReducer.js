@@ -5,6 +5,7 @@ import modalReducer from "./modal/modalReducer";
 import notificationReducer from "./notification/notificationReducer";
 import categoryReducer from "./categories/categoryReducer";
 import storeReducer from "./stores/storeReducer";
+import authReducer from './auth/authReducer'
 
 const rootReducer = combineReducers(
    {
@@ -13,6 +14,7 @@ const rootReducer = combineReducers(
       notification: notificationReducer,
       category: categoryReducer,
       store: storeReducer,
+      auth: authReducer
    }
 );
 
