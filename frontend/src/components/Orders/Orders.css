@@ -1,0 +1,51 @@
+.orders-container table {
+   width: 100%;
+}
+
+.orders-container th {
+   background: var(--tertiary-color);
+}
+
+.orders-container th,
+.orders-container td {
+   padding: 10px;
+   border-bottom: 1px solid #ccc;
+}
+
+.orders-container .image-wrapper {
+   width: 80px;
+   height: 60px;
+}
+
+.orders-container th:nth-child(2),
+.orders-container td:nth-child(2) {
+   width: 10%;
+}
+
+.orders-container th:nth-child(3),
+.orders-container td:nth-child(3) {
+   width: 15%;
+}
+
+.orders-container th:nth-child(4),
+.orders-container td:nth-child(4) {
+   width: 20%;
+}
+
+.orders-container th:nth-child(5),
+.orders-container td:nth-child(4) {
+   width: 10%;
+}
+
+.orders-container th:nth-child(1),
+.orders-container td:nth-child(1) {
+   width: auto;
+}
+
+.orders-container table label {
+   display: none;
+}
+
+.orders-container label {
+   display: none;
+}

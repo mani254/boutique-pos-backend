@@ -97,6 +97,18 @@
    width: 80px;
 }
 
+.billing-container .customer-info label {
+   display: none;
+}
+
+.billing-container .discount-input .form-input input[type="date"] {
+   width: auto;
+   padding: 5px 5px;
+   border-radius: 10px;
+   outline: none;
+   border: 1px solid #0009;
+}
+
 .billing-container .discount-input label {
    flex-shrink: 0;
 }

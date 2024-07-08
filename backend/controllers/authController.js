@@ -29,15 +29,13 @@ const authController = {
    initialLogin: async (req, res) => {
 
       try {
-
          const { token } = req.body
-         console.log(token, 'token')
          const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-
          if (decoded) {
             const user = await Admin.findById(decoded.adminId).populate('store')
             if (user) {
                let details = { username: user.username, _id: user._id, email: user.email, superAdmin: user.superAdmin, store: user.store }
+               res.cookie("token", token, { httpOnly: true });
                return res.status(200).json({ message: "initial Login Succesfull", user: details });
             } else {
                return res.status(404).json({ error: 'User not found' });

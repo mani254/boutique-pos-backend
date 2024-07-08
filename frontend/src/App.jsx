@@ -31,6 +31,7 @@ import ServerDown from "./pages/ServerDown.jsx";
 
 import { initialLogin } from "./redux/auth/authActions.js";
 import { showNotification } from "./redux/notification/notificationActions.js";
+import OrdersLayout from "./components/Orders/OrdersLayout.jsx";
 
 function App({ modal, auth, initialLogin, showNotification }) {
 	axios.defaults.withCredentials = true;
@@ -55,26 +56,33 @@ function App({ modal, auth, initialLogin, showNotification }) {
 		fetchInitialData();
 	}, [auth.isLoggedIn]);
 
+	// if (!auth.user) {
+	// 	return;
+	// }
 	return (
 		<div className="App">
 			<Notification />
 			<Routes>
 				<Route path="/login" element={<LoginPage />} />
-				<Route path="/" element={<AdminLayout />}>
-					<Route index element={<Dashboard />}></Route>
-					<Route path="/categories" element={<Categories />}></Route>
-					<Route path="stores" element={<StoreLayout />}>
-						<Route index element={<Stores />}></Route>
-						<Route path="add" element={<AddStore />} />
-						<Route path="edit/:id" element={<UpdateStore />} />
+				{auth.user && (
+					<Route path="/" element={<AdminLayout />}>
+						{auth.user.superAdmin && <Route index element={<Dashboard />}></Route>}
+						<Route path="/categories" element={<Categories />}></Route>
+						<Route path="stores" element={<StoreLayout />}>
+							<Route index element={<Stores />}></Route>
+							<Route path="add" element={<AddStore />} />
+							<Route path="edit/:id" element={<UpdateStore />} />
+						</Route>
+						<Route path="admins" element={<AdminPageLayout />}>
+							<Route index element={<Admins />}></Route>
+							<Route path="add" element={<AddAdmin />} />
+							<Route path="edit/:id" element={<UpdateAdmin />} />
+						</Route>
+						<Route path="billing" element={<BillingLayout />} />
+						<Route path="orders" element={<OrdersLayout />} />
 					</Route>
-					<Route path="admins" element={<AdminPageLayout />}>
-						<Route index element={<Admins />}></Route>
-						<Route path="add" element={<AddAdmin />} />
-						<Route path="edit/:id" element={<UpdateAdmin />} />
-					</Route>
-					<Route path="billing" element={<BillingLayout />} />
-				</Route>
+				)}
+
 				<Route path="*" element={<NotFound />} />
 				<Route path="/serverdown" element={<ServerDown />} />
 			</Routes>

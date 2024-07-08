@@ -8,10 +8,12 @@ import { connect } from "react-redux";
 import { getCategories } from "../../redux/categories/categoryActions";
 import html2canvas from "html2canvas";
 
-import { TextInput, TelInput, SelectInput, NumberInput, TextArea } from "../FormComponents/FormComponents";
+import { TextInput, TelInput, SelectInput, NumberInput, TextArea, DateInput } from "../FormComponents/FormComponents";
 import BillingReceipt from "../BillingReceipt/BillingReceipt";
+import axios from "axios";
+import { showNotification } from "../../redux/notification/notificationActions";
 
-function BillingLayout({ categoriesData, getCategories }) {
+function BillingLayout({ categoriesData, getCategories, showNotification }) {
 	const [items, setItems] = useState([]);
 	const [customerDeatils, setCustomerDeatils] = useState({
 		name: "",
@@ -24,7 +26,7 @@ function BillingLayout({ categoriesData, getCategories }) {
 		price: null,
 		sTotal: 0,
 	});
-	const [billInfo, setBillInfo] = useState({ discount: 0, advance: 0, total: 0, note: null });
+	const [billInfo, setBillInfo] = useState({ discount: 0, advance: 0, total: 0, note: null, delivaryDate: "" });
 
 	const fetchCategories = async () => {
 		try {
@@ -69,6 +71,9 @@ function BillingLayout({ categoriesData, getCategories }) {
 
 	function handleItem(e) {
 		const { value, name } = e.target;
+		if (name === "category") {
+			document.getElementById("quantity").focus();
+		}
 		setSingleItems({ ...singleItem, [name]: value });
 	}
 
@@ -84,10 +89,12 @@ function BillingLayout({ categoriesData, getCategories }) {
 		setItems(updatedItems);
 		setSingleItems(removedItem[0]);
 	}
+
 	function handleItemEntry() {
 		setItems([...items, singleItem]);
 		setSingleItems({ ...singleItem, price: "", sTotal: "", quantity: "" });
 	}
+
 	function calcGrandTotal() {
 		let total = 0;
 		items.forEach((item) => {
@@ -98,8 +105,27 @@ function BillingLayout({ categoriesData, getCategories }) {
 
 		setBillInfo((prev) => ({ ...prev, total: grandTotal }));
 	}
-	function handleSubmit() {
-		printBill();
+
+	async function handleSubmit() {
+		if (!customerDeatils.name || !customerDeatils.phone) return showNotification("Fill customer Details");
+		if (items.length <= 0) return showNotification("Add atleaset one Item");
+
+		let dataToSend = { ...customerDeatils, ...billInfo, items: items };
+		try {
+			const res = await axios.post(`${process.env.REACT_APP_BACKENDURI}/api/order`, dataToSend);
+			if (res.data) {
+				setItems([]);
+				setBillInfo({ discount: 0, advance: 0, total: 0, note: null, delivaryDate: "" });
+				setCustomerDeatils({
+					name: "",
+					phone: "",
+				});
+				printBill();
+			}
+		} catch (err) {
+			console.error("Error while billing", err);
+			showNotification(err.response ? err.response.data.error : "Network Error");
+		}
 	}
 
 	return (
@@ -152,10 +178,32 @@ function BillingLayout({ categoriesData, getCategories }) {
 									<td className="type">{categoryOptions.length >= 1 && <SelectInput options={categoryOptions} label="Category" id="category" defaultValue={singleItem.category} variant="variant-1" name="category" onChange={handleItem} required />}</td>
 
 									<td>
-										<NumberInput label="Quantity" name="quantity" id="store-name" onChange={handleItem} value={singleItem.quantity} variant="variant-1" required></NumberInput>
+										<NumberInput
+											label="Quantity"
+											name="quantity"
+											id="quantity"
+											onChange={handleItem}
+											value={singleItem.quantity}
+											variant="variant-1"
+											required
+											onKeyDown={(e) => {
+												if (e.key === "Enter") {
+													document.getElementById("price").focus();
+												}
+											}}></NumberInput>
 									</td>
 									<td>
-										<NumberInput label="Price" name="price" id="price" onChange={handleItem} value={singleItem.price} variant="variant-1" required></NumberInput>
+										<NumberInput
+											label="Price"
+											name="price"
+											id="price"
+											onChange={handleItem}
+											value={singleItem.price}
+											variant="variant-1"
+											required
+											onKeyDown={(e) => {
+												if (e.key === "Enter") handleItemEntry();
+											}}></NumberInput>
 									</td>
 									<td className="reduced-price">
 										<NumberInput label="sTotal:" name="sTotal" id="sTotal" value={singleItem.sTotal} variant="variant-1" required></NumberInput>
@@ -172,18 +220,23 @@ function BillingLayout({ categoriesData, getCategories }) {
 					<div className="customer-info">
 						<h4>Customer Deatils</h4>
 						<hr />
-						<TextInput label="Name:" name="name" id="store-name" onChange={handleChange} value={customerDeatils.name} variant="variant-1" required>
+						<TextInput label="Name:" name="name" id="store-name" placeholder="customerName" onChange={handleChange} value={customerDeatils.name} variant="variant-1" required>
 							{/* {errors.name && <p className="error">{errors.name}</p>} */}
 						</TextInput>
 
-						<TelInput label="Phone No:" name="phone" id="phone" onChange={handleChange} value={customerDeatils.phone} variant="variant-1" required>
+						<TelInput label="Phone No:" name="phone" id="phone" placeholder="Phone No" onChange={handleChange} value={customerDeatils.phone} variant="variant-1" required>
 							{/* {errors.phone && <p className="error">{errors.phone}</p>} */}
 						</TelInput>
 					</div>
 					<div className="bill-info mt-4">
 						<h4>Bill Info</h4>
 						<hr />
+
 						<div className="discount-input">
+							<div className="d-flex align-items-center justify-content-between mt-2 total-flex">
+								<p>Delivary Date:</p>
+								<DateInput name="delivaryDate" value={billInfo.delivaryDate} onChange={(e) => setBillInfo((prev) => ({ ...prev, delivaryDate: e.target.value }))} />
+							</div>
 							<NumberInput
 								label="Special Discount:"
 								name="discount"
@@ -247,6 +300,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
 	getCategories: () => dispatch(getCategories()),
+	showNotification: (message) => dispatch(showNotification(message)),
 });
 
 async function printBill() {

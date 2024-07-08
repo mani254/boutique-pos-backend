@@ -25,15 +25,18 @@ const orderSchema = new Schema({
    note: {
       type: String
    },
-   category: {
-      type: Schema.Types.ObjectId,
-      ref: 'Categories',
+   items: {
+      type: Array,
       required: true,
    },
    customer: {
       type: Schema.Types.ObjectId,
       ref: 'Customers',
    },
+   store: {
+      type: Schema.Types.ObjectId,
+      ref: 'Stores'
+   }
 }, { timestamps: true });
 
 const Orders = mongoose.model('Orders', orderSchema, 'orders');

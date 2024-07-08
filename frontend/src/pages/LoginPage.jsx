@@ -20,7 +20,11 @@ function LoginPage({ login, showNotification }) {
 		e.preventDefault();
 		await login(logInDetails)
 			.then((res) => {
-				navigate("/");
+				if (res.user.superAdmin) {
+					navigate("/");
+				} else {
+					navigate("/billing");
+				}
 				console.log("logged in succesfully");
 			})
 			.catch((err) => {

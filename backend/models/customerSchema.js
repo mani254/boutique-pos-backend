@@ -10,18 +10,7 @@ const customerSchema = new Schema({
    name: {
       type: String,
       required: true
-   },
-   email: {
-      type: String,
-   },
-   address: {
-      type: String,
-   },
-   orders: [{
-      type: Schema.Types.ObjectId,
-      ref: 'Orders',
-      required: true
-   }],
+   }
 }, { timestamps: true });
 
 

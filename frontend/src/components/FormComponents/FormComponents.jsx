@@ -109,5 +109,14 @@ function FileInput({ label, id, variant, children, value = "null", ...otherProps
 		</div>
 	);
 }
+function DateInput({ label, variant, name, children, ...props }) {
+	return (
+		<div className={`form-input input-wrapper ${variant}`}>
+			<label htmlFor={name}>{label}</label>
+			<input type="date" id={name} name={name} {...props} />
+			{children}
+		</div>
+	);
+}
 
-export { TextInput, NumberInput, SelectInput, TextArea, TelInput, RadioButton, Checkbox, PasswordInput, FileInput };
+export { TextInput, NumberInput, SelectInput, TextArea, TelInput, RadioButton, Checkbox, PasswordInput, FileInput, DateInput };
