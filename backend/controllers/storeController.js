@@ -1,4 +1,5 @@
 const Store = require('../models/storeSchema.js');
+const Admin = require('../models/adminSchema.js');
 
 const storeController = {
    addStore: async (req, res) => {
@@ -70,6 +71,7 @@ const storeController = {
          if (!store) {
             return res.status(404).json({ error: 'Store not found' });
          }
+         const admins = await Admin.deleteMany({ store: store._id });
          return res.status(200).json({ message: 'Store deleted successfully' });
       } catch (error) {
          console.error("Error deleting store:", error);

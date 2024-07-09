@@ -1,5 +1,6 @@
 // const express = require('express');
 // const mongoose = require('mongoose');
+// const { default: OrdersLayout } = require('../../frontend/src/components/Orders/OrdersLayout.jsx');
 const Customers = require('../models/customerSchema.js')
 const Orders = require('../models/orderSchema.js');
 
@@ -53,7 +54,7 @@ const orderController = {
    // },
 
    getOrders: async (req, res) => {
-      const { limit, skip, search, status } = req.query;
+      const { limit, skip, search, status, deliveryDate } = req.query;
 
       let orders;
       let totalOrdersCount;
@@ -64,12 +65,23 @@ const orderController = {
                $or: [
                   { 'customer.name': { $regex: search, $options: 'i' } },
                   { 'customer.number': { $regex: search, $options: 'i' } },
+                  { $expr: { $regexMatch: { input: { $toString: "$invoice" }, regex: search, options: "i" } } }
                ],
             };
          }
 
          if (status) {
             searchCriteria.status = status
+         }
+         if (deliveryDate) {
+            const date = new Date(deliveryDate);
+            const nextDay = new Date(date);
+            nextDay.setDate(date.getDate() + 1);
+
+            searchCriteria.deliveryDate = {
+               $gte: date,
+               $lt: nextDay
+            };
          }
 
          if (!req.store._id) {
@@ -178,6 +190,22 @@ const orderController = {
       }
    },
 
+   getOrderById: async (req, res) => {
+      try {
+         const { orderId } = req.params;
+         const order = await Orders.findById(orderId).populate('customer');
+
+         if (!order) {
+            return res.status(404).json({ error: "Order not found" });
+         }
+
+         res.json(order);
+      } catch (err) {
+         console.error(err);
+         res.status(500).json({ error: "Server error" });
+      }
+   },
+
 
 
    // getOrders: async (req, res) => {
@@ -234,27 +262,63 @@ const orderController = {
 
    addOrder: async (req, res) => {
       try {
-         const { name, phone, total, advance, delivaryDate, note, items } = req.body;
+         const { name, phone, total, advance, deliveryDate, note, items, invoice } = req.body;
+
+         console.log(!name, !phone, !total, !deliveryDate, !items)
+         if (!name || !phone || !total || !deliveryDate || !items) {
+            return res.status(400).json({ error: "Missing required fields" });
+         }
+
          let customer = await Customers.findOne({ number: phone });
          if (!customer) {
-            console.log(name, phone)
+            console.log(name, phone);
             customer = new Customers({ name, number: phone });
             await customer.save();
+         } else {
+            customer.name = name;
+            await customer.save();
          }
+
          const order = new Orders({
             price: total,
-            deliveryDate: new Date(delivaryDate),
+            deliveryDate: new Date(deliveryDate),
             advance: advance,
             note: note,
             customer: customer._id,
             items: items,
-            store: req.store._id
+            store: req.store._id,
+            invoice: invoice
          });
          await order.save();
-         res.status(201).json({ message: 'Order created successfully', order })
+
+         res.status(201).json({ message: 'Order created successfully', order });
       } catch (error) {
          console.error("Error adding order:", error);
          return res.status(500).json({ error: "Could not add order. Please try again later." });
+      }
+   },
+
+   updateOrderStatus: async (req, res) => {
+      try {
+         const { orderId, status } = req.body;
+
+         if (!orderId || !status) {
+            return res.status(400).json({ error: "Missing required fields" });
+         }
+
+         const order = await Orders.findById(orderId);
+
+         if (!order) {
+            return res.status(404).json({ error: "Order not found" });
+         }
+
+         order.status = status;
+         await order.save();
+
+         res.status(200).json({ message: 'Order status updated successfully', order });
+      } catch (error) {
+         console.error("Error updating order status:", error);
+         return res.status(500).json({ error: "Could not update order status. Please try again later." });
       }
    },
 

@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "./BillingReceipt.css";
+import { connect } from "react-redux";
+import { useParams } from "react-router-dom";
+import DetailedOrder from "../Orders/DetailedOrder";
 
-function BillingReceipt({ items, customerDetails, billInfo }) {
+function BillingReceipt({ items, customerDetails, billInfo, invoice, auth }) {
 	let formattedDateTime = getFormattedDateTime();
 	const [amountInWords, setAmountInWords] = useState("Zero");
 	const [balance, setBalance] = useState(billInfo.total);
 
+	const { orderId } = useParams();
 	useEffect(() => {
 		const amountInWords = convertAmountToWords(billInfo.total);
 		setAmountInWords(amountInWords);
@@ -17,14 +21,30 @@ function BillingReceipt({ items, customerDetails, billInfo }) {
 	}, [billInfo.total, billInfo.advance]);
 
 	return (
-		<div className="receipt" id="bill-receipt">
-			<div className="title mt-4">
-				<h3 className="text-center">Sruthi Boutique</h3>
-				<p className="text-center mb-1">Flat No 494, Kings court Avenue, Magunta Layout, Main Road, Nellore</p>
-				<p className="text-center mt-0">Phone: 8688014415</p>
-			</div>
+		<div className={`receipt ${orderId && "detailed-order"}`} id="bill-receipt">
+			{!orderId && (
+				<div className="title mt-4 d-flex align-items-center">
+					<div className="image-wrapper">
+						<img src="/assets/images/vinakaya-logo.png" />
+					</div>
+					<div className="px-5">
+						<h3 className="text-center">{auth.user?.store?.name}</h3>
+						<p className="text-center mt-2 mb-2">( MNV Groups )</p>
+						<p className="text-center mb-1">{auth.user?.store?.address}</p>
+						<div className="d-flex align-items-center justify-content-center mt-2">
+							<p className="text-center mt-0">Phone: {auth.user?.store?.phone}</p>
+							<p className="text-center mt-0 ms-4">Landline: {auth.user?.store?.landLine}</p>
+						</div>
+					</div>
+					<div className="image-wrapper">
+						<img src="/assets/images/venkaya-logo.png" />
+					</div>
+				</div>
+			)}
+
 			{/* <h3 className="text-center mt-4">Stitching Invoice</h3> */}
-			<hr />
+
+			{!orderId && <hr />}
 			<div className="d-flex align-items-center justify-content-between">
 				<div className="text-left">
 					<p className="mb-1">
@@ -36,7 +56,7 @@ function BillingReceipt({ items, customerDetails, billInfo }) {
 				</div>
 				<div className="text-right">
 					<p className="mb-1">
-						<strong>Invoice:</strong> <span>234</span>
+						<strong>Invoice:</strong> <span>{invoice}</span>
 					</p>
 					<p>
 						<strong>Date:</strong>
@@ -83,12 +103,15 @@ function BillingReceipt({ items, customerDetails, billInfo }) {
 			</table>
 			<hr />
 			<div className="d-flex justify-content-between">
-				<strong className="amount-in-words">Amount in Words: {amountInWords} Rupees Only /-</strong>
+				{!orderId && <strong className="amount-in-words">Amount in Words: {amountInWords} Rupees Only /-</strong>}
 				<div>
-					<p className="mb-1">
-						<strong>discount: </strong>
-						<span> {billInfo.discount}</span>
-					</p>
+					{billInfo.discount >= 1 && (
+						<p className="mb-1">
+							<strong>discount: </strong>
+							<span> {billInfo.discount}</span>
+						</p>
+					)}
+
 					<p className="mb-1">
 						<strong>Net Amount</strong>
 						<span> {billInfo.total}</span>
@@ -98,8 +121,8 @@ function BillingReceipt({ items, customerDetails, billInfo }) {
 			<hr />
 			<div className="d-flex align-items-center justify-content-between">
 				<p className="mb-1">
-					<strong>Delivary Date:</strong>
-					<span> {billInfo.delivaryDate}</span>
+					<strong>Delivery Date:</strong>
+					<span> {billInfo.deliveryDate}</span>
 				</p>
 				<p className="mb-1">
 					<strong>Advance Paid:</strong>
@@ -111,10 +134,19 @@ function BillingReceipt({ items, customerDetails, billInfo }) {
 				</p>
 			</div>
 			<br />
+			{orderId && (
+				<p className="text-center">
+					<strong>Note: </strong>
+					{billInfo.note}
+				</p>
+			)}
+			{!orderId && (
+				<>
+					<p className="text-center mb-1">Thankyou for using our stitching service</p>
 
-			<p className="text-center mb-1">Thankyou for using our stitching service</p>
-
-			<p className="text-center">Please visit us again</p>
+					<p className="text-center">Please visit us again</p>
+				</>
+			)}
 		</div>
 	);
 }
@@ -223,4 +255,10 @@ function calculateBalance(total, advance) {
 	return total - advance;
 }
 
-export default BillingReceipt;
+const mapStateToProps = (state) => {
+	return {
+		auth: state.auth,
+	};
+};
+
+export default connect(mapStateToProps, null)(BillingReceipt);

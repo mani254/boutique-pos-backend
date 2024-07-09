@@ -54,7 +54,7 @@ function Navbar({ auth, logout }) {
 			<div className="admin-wrapper">
 				<div className="d-flex align-items-center justify-content-center">
 					<p>{user.username}</p>
-					<img src="/assets/profile.png" alt="profile-image" />
+					{/* <img src="/assets/profile.png" alt="profile-image" /> */}
 				</div>
 				<div className="d-flex align-items-center justify-content-center">
 					<span className="icon" onClick={logout}>

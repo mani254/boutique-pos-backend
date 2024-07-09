@@ -7,10 +7,11 @@ import Orders from "./Orders";
 import Pagination from "../Pagination/Pagination";
 import SearchComponent from "../SearchComponent/SearchComponent";
 import { SelectInput } from "../FormComponents/FormComponents";
+import { DateInput } from "../FormComponents/FormComponents";
 
 function OrdersLayout({ showNotification }) {
 	const statusArray = [
-		{ label: "all", value: "all" },
+		{ label: "all", value: "" },
 		{ label: "booked", value: "booked" },
 		{ label: "under MW", value: "under MW" },
 		{ label: "under stitching", value: "under stitching" },
@@ -24,6 +25,7 @@ function OrdersLayout({ showNotification }) {
 	const [totalOrders, setTotalOrders] = useState(0);
 	const [searchValue, setSearchValue] = useState("");
 	const [statusValue, setStatusValue] = useState("");
+	const [filterDeliveryDate, setfilterDeliveryDate] = useState("");
 
 	const fetchOrders = async (page = 1, searchQuery = "", statusValue = "") => {
 		page = page - 1;
@@ -36,6 +38,7 @@ function OrdersLayout({ showNotification }) {
 					skip,
 					search: searchQuery,
 					status: statusValue,
+					deliveryDate: filterDeliveryDate,
 				},
 			});
 			if (res.data) {
@@ -50,7 +53,7 @@ function OrdersLayout({ showNotification }) {
 
 	useEffect(() => {
 		fetchOrders(currentPage, searchValue, statusValue);
-	}, [currentPage, searchValue, statusValue]);
+	}, [currentPage, searchValue, statusValue, filterDeliveryDate]);
 
 	const handleSearch = (query) => {
 		setSearchValue(query);
@@ -61,6 +64,14 @@ function OrdersLayout({ showNotification }) {
 			<div className="d-flex align-items-center justify-content-between">
 				<h2>Orders</h2>
 				<SearchComponent name="searchvalue" variant="variant-1" value={searchValue} onSearch={handleSearch} />
+				<DateInput
+					name="filterdeliveryDate"
+					value={filterDeliveryDate}
+					onChange={(e) => {
+						setfilterDeliveryDate(e.target.value);
+					}}
+					variant="variant-1"
+				/>
 				<SelectInput options={statusArray} label="Status" id="status" name="status" defaultValue={statusValue} onChange={(e) => setStatusValue(e.target.value)} variant="variant-1" required />
 			</div>
 			<hr />

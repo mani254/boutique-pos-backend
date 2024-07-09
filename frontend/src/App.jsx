@@ -32,6 +32,7 @@ import ServerDown from "./pages/ServerDown.jsx";
 import { initialLogin } from "./redux/auth/authActions.js";
 import { showNotification } from "./redux/notification/notificationActions.js";
 import OrdersLayout from "./components/Orders/OrdersLayout.jsx";
+import DetailedOrder from "./components/Orders/DetailedOrder.jsx";
 
 function App({ modal, auth, initialLogin, showNotification }) {
 	axios.defaults.withCredentials = true;
@@ -49,6 +50,7 @@ function App({ modal, auth, initialLogin, showNotification }) {
 					navigate("/login");
 				}
 			} catch (err) {
+				navigate("login");
 				console.error("Login error:", err);
 				showNotification(err.response ? err.response.data.error : "Network Error");
 			}
@@ -64,24 +66,24 @@ function App({ modal, auth, initialLogin, showNotification }) {
 			<Notification />
 			<Routes>
 				<Route path="/login" element={<LoginPage />} />
-				{auth.user && (
-					<Route path="/" element={<AdminLayout />}>
-						{auth.user.superAdmin && <Route index element={<Dashboard />}></Route>}
-						<Route path="/categories" element={<Categories />}></Route>
-						<Route path="stores" element={<StoreLayout />}>
-							<Route index element={<Stores />}></Route>
-							<Route path="add" element={<AddStore />} />
-							<Route path="edit/:id" element={<UpdateStore />} />
-						</Route>
-						<Route path="admins" element={<AdminPageLayout />}>
-							<Route index element={<Admins />}></Route>
-							<Route path="add" element={<AddAdmin />} />
-							<Route path="edit/:id" element={<UpdateAdmin />} />
-						</Route>
-						<Route path="billing" element={<BillingLayout />} />
-						<Route path="orders" element={<OrdersLayout />} />
+
+				<Route path="/" element={<AdminLayout />}>
+					{auth?.user?.superAdmin && <Route index element={<Dashboard />}></Route>}
+					<Route path="/categories" element={<Categories />}></Route>
+					<Route path="stores" element={<StoreLayout />}>
+						<Route index element={<Stores />}></Route>
+						<Route path="add" element={<AddStore />} />
+						<Route path="edit/:id" element={<UpdateStore />} />
 					</Route>
-				)}
+					<Route path="admins" element={<AdminPageLayout />}>
+						<Route index element={<Admins />}></Route>
+						<Route path="add" element={<AddAdmin />} />
+						<Route path="edit/:id" element={<UpdateAdmin />} />
+					</Route>
+					<Route path="billing" element={<BillingLayout />} />
+					<Route path="orders" element={<OrdersLayout />} />
+					<Route path="order/:orderId" element={<DetailedOrder />} />
+				</Route>
 
 				<Route path="*" element={<NotFound />} />
 				<Route path="/serverdown" element={<ServerDown />} />

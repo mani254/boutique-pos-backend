@@ -5,6 +5,9 @@ const authorization = require('../middleware/authorization.jsx')
 
 router.get('/', authorization, orderController.getOrders)
 router.post('/', authorization, orderController.addOrder);
+router.post('/update-status', orderController.updateOrderStatus)
+router.get('/:orderId', orderController.getOrderById)
+
 // router.delete('/:id', orderController.deleteorder)
 // router.put('/:id', upload.single('image'), orderController.updateorder)
 

@@ -5,6 +5,10 @@ const orderSchema = new Schema({
    price: {
       type: Number,
    },
+   invoice: {
+      type: Number,
+      required: true,
+   },
    orderDate: {
       type: Date,
       default: Date.now,

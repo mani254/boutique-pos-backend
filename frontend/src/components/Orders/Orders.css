@@ -49,3 +49,8 @@
 .orders-container label {
    display: none;
 }
+
+.orders-container tr:hover {
+   background: #0001;
+   cursor: pointer;
+}

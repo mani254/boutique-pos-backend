@@ -9,7 +9,6 @@ import { getStores } from "../../redux/stores/storeActions";
 function StoreLayout({ stores, getStores }) {
 	const navigate = useNavigate();
 
-	
 	useEffect(() => {
 		(async () => {
 			try {
