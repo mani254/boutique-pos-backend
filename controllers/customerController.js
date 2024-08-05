@@ -2,6 +2,7 @@ const Customers = require('../models/customerSchema.js');
 const Orders = require('../models/orderSchema.js');
 
 const customerController = {
+
    // getCustomers: async (req, res) => {
    //    const { search, limit = 10, skip = 0 } = req.query;
    //    try {
@@ -54,15 +55,12 @@ const customerController = {
             if (storeId) orderQuery.store = storeId;
          }
 
-         // Get unique customer IDs from orders based on store ID
          const orders = await Orders.find(orderQuery).distinct('customer');
 
-         // If there are no orders, return an empty list
          if (!orders.length) {
             return res.status(200).json({ customers: [], totalCustomersCount: 0 });
          }
 
-         // Build the customer query
          let customerQuery = { _id: { $in: orders } };
          if (search) {
             customerQuery.$or = [
@@ -78,29 +76,8 @@ const customerController = {
 
          const totalCustomersCount = await Customers.countDocuments(customerQuery);
 
-         // Adding totalOrders property to each customer object
-         const customersWithOrderCount = await Promise.all(
-            customers.map(async (customer) => {
+         res.status(200).json({ customers, totalCustomersCount });
 
-               if (req.store) {
-                  ordersCountQuery = { customer: customer._id, store: req.store }
-               }
-               else {
-                  if (storeId) {
-                     ordersCountQuery = { customer: customer._id, store: storeId }
-                  }
-                  ordersCountQuery = { customer: customer._id }
-               }
-
-               const totalOrders = await Orders.countDocuments(ordersCountQuery);
-               return {
-                  ...customer.toObject(),
-                  totalOrders
-               };
-            })
-         );
-
-         res.status(200).json({ customers: customersWithOrderCount, totalCustomersCount });
       } catch (error) {
          console.error(error);
          res.status(500).json({ error: 'An error occurred while fetching customers.' });

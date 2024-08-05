@@ -155,7 +155,6 @@ const orderController = {
       try {
          let searchCriteria = {};
 
-
          if (search) {
             searchCriteria = {
                $or: [
@@ -194,6 +193,7 @@ const orderController = {
                startDate = new Date(fromDate);
                endDate = new Date(toDate);
                endDate.setDate(endDate.getDate() + 1);
+               console.log(startDate, endDate)
             }
             searchCriteria.deliveryDate = {
                $gte: startDate,
