@@ -15,7 +15,7 @@ const authController = {
             if (passwordMatch) {
                let details = { username: existingAdmin.username, _id: existingAdmin._id, email: existingAdmin.email, superAdmin: existingAdmin.superAdmin, store: existingAdmin.store }
                const token = jwt.sign({ adminId: existingAdmin._id, superAdmin: existingAdmin.superAdmin }, process.env.JWT_SECRET_KEY, { expiresIn: process.env.JWT_EXPIRY });
-               res.cookie("token", token, { httpOnly: true });
+               res.cookie("token", token, { httpOnly: true, sameSite: 'None', secure: true, });
                return res.status(200).json({ message: "Login successful", token, user: details });
             }
             return res.status(401).json({ error: "Invalid credentials" });
